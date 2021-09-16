@@ -1,2 +1,10 @@
 # Raven
-just a couple of friends minding their own business and having fun...
+
+Just a couple of friends minding their own business and having fun...
+
+## Contributors
+
+- [iQuerz](https://github.com/iQuerz)
+- [staphthat](https://github.com/staphthat)
+- [JoeMlah](pending...)
+- [itsaghin](https://github.com/itsaghin)
