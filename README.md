@@ -6,6 +6,6 @@ Just a couple of friends minding their own business and having fun...
 
 - [iQuerz](https://github.com/iQuerz)
 - [staphthat](https://github.com/staphthat)
-- [JoeMlah](pending...)
+- [JoeMlah](https://github.com/JoeMlah)
 - [itsaghin](https://github.com/itsaghin)
 - [mikms](https://github.com/miljanamilosevic)
