@@ -6,5 +6,6 @@ namespace App.Models
 {
     public class HealthTransaction : Transaction
     {
+
     }
 }
