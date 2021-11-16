@@ -9,6 +9,7 @@ namespace App.Models.Types
         Makeup,
         Clothing,
         Footwear,
+        Accessories,
         Other
     }
 }
