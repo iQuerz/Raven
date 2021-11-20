@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace App.Models.Types
+﻿namespace App.Models.Types
 {
     public enum BeautyAndFashionType
     {

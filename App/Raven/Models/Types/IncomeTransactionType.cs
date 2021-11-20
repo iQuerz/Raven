@@ -2,9 +2,9 @@
 {
     public enum IncomeTransactionType
     {
-        wage,
-        scholarship,
-        allowance,
-        other
+        Wage,
+        Scholarship,
+        Allowance,
+        Other
     }
 }
