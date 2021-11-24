@@ -8,5 +8,6 @@ namespace App.Models
     internal class IncomeTransaction : Transaction
     {
         public IncomeTransactionType _incomeTransactionType { get; set; }
+        public string _Description { get; set; }
     }
 }
