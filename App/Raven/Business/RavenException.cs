@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace App.Middleware
+namespace App.Business
 {
     public class RavenException : Exception
     {
