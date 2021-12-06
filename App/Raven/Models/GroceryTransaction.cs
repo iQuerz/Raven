@@ -5,7 +5,7 @@ using App.Models.Base;
 
 namespace App.Models
 {
-    internal class GroceryTransaction : Transaction
+    public class GroceryTransaction : Transaction
     {
         //to be added
     }

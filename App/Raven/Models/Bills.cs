@@ -6,7 +6,7 @@ using App.Models.Types;
 
 namespace App.Models
 {
-    internal class Bills : Transaction
+    public class Bills : Transaction
     {
         public BillType _BillType { get; set; }
     }
