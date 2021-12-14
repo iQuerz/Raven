@@ -8,7 +8,7 @@ using System.Data;
 using App.Models;
 using App.Business;
 
-namespace App
+namespace App.Business
 {
     public static class DBInterface
     {
