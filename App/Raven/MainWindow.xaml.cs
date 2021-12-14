@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,12 @@ namespace Raven
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += App_OnLoad;
+        }
+
+        private void App_OnLoad(object sender, RoutedEventArgs e)
+        {
+            DBInterface.LoadData();
         }
     }
 }
