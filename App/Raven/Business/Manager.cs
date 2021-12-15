@@ -13,6 +13,7 @@ namespace App.Business
             _Transactions = new List<Transaction>();
         }
 
+
         #region Balance methods
         public double Balance
         {
@@ -76,6 +77,18 @@ namespace App.Business
         public void InsertTransaction(Transaction transaction)
         {
             //TODO: Add a transaction through DBInterface.
+        }
+        #endregion
+
+        #region Load & Save
+        public void loadTransactions()
+        {
+            _Transactions = DBInterface.LoadData();
+        }
+
+        public void saveTransactions()
+        {
+            DBInterface.SaveData(ref _Transactions);
         }
         #endregion
 
