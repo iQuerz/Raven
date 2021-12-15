@@ -8,6 +8,6 @@ namespace App.Models
 {
     public class IncomeTransaction : Transaction
     {
-        public IncomeTransactionType _incomeTransactionType { get; set; }
+        public IncomeTransactionType _IncomeTransactionType { get; set; }
     }
 }

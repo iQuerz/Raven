@@ -1,159 +1,199 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Dapper;
-using System.Data.SQLite;
-using App.Models.Base;
 using System.Data;
+using System.Data.SQLite;
+
+using App.Models.Base;
+using App.Models.Types;
 using App.Models;
-using App.Business;
 
 namespace App.Business
 {
     public static class DBInterface
     {
+        private static readonly string connectionString = "Data Source=.\\Data.db;Version=3;";
+
+        /// <summary>
+        /// Loads the data from database onto a list.
+        /// </summary>
+        /// <returns>A List of transactions from the database.</returns>
         public static List<Transaction> LoadData()
         {
-            // Lista koja prosledjuje vrednosti iz Data.db 
-            List<Transaction> list = new List<Transaction>();
+            // List that we will be returning
+            List<Transaction> outputList = new List<Transaction>();
 
-            // Loading data into list
-            using (IDbConnection dbConnection = new SQLiteConnection("Data Source=.\\Data.db;Version=3;"))
+            // Loading data into the list using a database connection
+            #region Database Interaction
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
             {
-                var output = dbConnection.Query<dynamic>("Select * from Transactions;", new DynamicParameters()).AsList<dynamic>();
-                foreach (dynamic element in output)
+                // Get all the transactions from "Transactions" table into a "transactionData" list.
+                var transactionsData = dbConnection.Query<dynamic>("Select * from Transactions;", new DynamicParameters()).AsList<dynamic>();
+                foreach (dynamic transaction in transactionsData)
                 {
-                    string date = element.Date;
-                    string description = element.Description;
-                    int id = (int)element.ID;
-                    double value = element.Value;
-                    string child = element.Child;
+                    // Extract all the columns into variables
+                    string date = transaction.Date;
+                    string description = transaction.Description;
+                    int id = (int)transaction.ID;
+                    double value = transaction.Value;
+                    string child = transaction.Child;
 
-                    switch(child)
+                    // Create a different transaction based on the value
+                    // stored in "child" column and add it to the "outputList"
+                    switch (child)
                     {
+                        #region IncomeTransaction
                         case "IncomeTransaction":
-                            var type = dbConnection.Query<dynamic>($"Select IncomeTransactionType from IncomeTransaction where TransactionID={id};").AsList<dynamic>();
+                            var categoryData = dbConnection.Query<dynamic>($"Select IncomeTransactionType from IncomeTransaction where TransactionID={id};").AsList<dynamic>();
                             IncomeTransaction incomeTransaction = new IncomeTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
-                                _incomeTransactionType = type[0].IncomeTransactionType,
+                                _IncomeTransactionType = (IncomeTransactionType)Enum.Parse(typeof(IncomeTransactionType), categoryData[0].IncomeTransactionType)
                             };
-                            list.Add(incomeTransaction);
+                            outputList.Add(incomeTransaction);
                             break;
+                        #endregion
+
+                        #region LoanTransaction
                         case "LoanTransaction":
-                            type = dbConnection.Query<dynamic>($"Select Resolved,PayBack from LoanTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select Resolved,PayBack from LoanTransaction where TransactionID={id};").AsList<dynamic>();
                             LoanTransaction loanTransaction = new LoanTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
-                                _Status = type[0].Resolved,
-                                _PayBack = type[0].PayBack,
+                                _Status = Convert.ToBoolean(categoryData[0].Resolved),
+                                _PayBack = categoryData[0].PayBack
                             };
-                            list.Add(loanTransaction);
+                            outputList.Add(loanTransaction);
                             break;
+                        #endregion
+
+                        #region HealthTransaction
                         case "HealthTransaction":
-                            type = dbConnection.Query<dynamic>($"Select HealthTransactionType from HealthTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select HealthTransactionType from HealthTransaction where TransactionID={id};").AsList<dynamic>();
                             HealthTransaction healthTransaction = new HealthTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
-                                _HealthTransactionType = type[0].HealthTransactionType
+                                _HealthTransactionType = (HealthTransactionType)Enum.Parse(typeof(IncomeTransactionType), categoryData[0].HealthTransactionType)
                             };
-                            list.Add(healthTransaction);
+                            outputList.Add(healthTransaction);
                             break;
+                        #endregion
+
+                        #region GroceryTransaction
                         case "GroceryTransaction":
                             GroceryTransaction groceryTransaction = new GroceryTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
-                                _Value = value,
+                                _Value = value
                             };
-                            list.Add(groceryTransaction);
+                            outputList.Add(groceryTransaction);
                             break;
+                        #endregion
+
+                        #region SavingsTransaction
                         case "SavingsTransaction":
                             SavingsTransaction savingsTransaction = new SavingsTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
-                                _Value = value,
+                                _Value = value
                             };
-                            list.Add(savingsTransaction);
+                            outputList.Add(savingsTransaction);
                             break;
+                        #endregion
+
+                        #region EntertainmentTransaction
                         case "EntertainmentTransaction":
-                            type = dbConnection.Query<dynamic>($"Select EntertainmentType from EntertainmentTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select EntertainmentType from EntertainmentTransaction where TransactionID={id};").AsList<dynamic>();
                             EntertainmentTransaction entertainmentTransaction = new EntertainmentTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
-                                _EntertainmentType = type[0].EntertainmentType,
+                                _EntertainmentType = (EntertainmentType)Enum.Parse(typeof(EntertainmentType), categoryData[0].EntertainmentType)
                             };
-                            list.Add(entertainmentTransaction);
+                            outputList.Add(entertainmentTransaction);
                             break;
+                        #endregion
+
+                        #region DebtTransaction
                         case "DebtTransaction":
-                            type = dbConnection.Query<dynamic>($"Select Resolved,PaidBack from DebtTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select Resolved,PaidBack from DebtTransaction where TransactionID={id};").AsList<dynamic>();
                             DebtTransaction debtTransaction = new DebtTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
-                                _Status = type[0].Resolved,
-                                _PaidBack = type[0].PaidBack,
+                                _Status = Convert.ToBoolean(categoryData[0].Resolved),
+                                _PaidBack = categoryData[0].PaidBack,
                             };
-                            list.Add(debtTransaction);
+                            outputList.Add(debtTransaction);
                             break;
+                        #endregion
+
+                        #region Bills
                         case "Bills":
-                            type = dbConnection.Query<dynamic>($"Select BillType from Bills where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select BillType from Bills where TransactionID={id};").AsList<dynamic>();
                             Bills bill = new Bills
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
-                                _BillType = type[0].BillType,
+                                _BillType = (BillType)Enum.Parse(typeof(BillType), categoryData[0].BillType)
                             };
-                            list.Add(bill);
+                            outputList.Add(bill);
                             break;
+                        #endregion
+
+                        #region Beauty&Fashion
                         case "BeautyAndFashionTransaction":
-                            type = dbConnection.Query<dynamic>($"Select BeautyAndFashionType from BeautyAndFashionTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select BeautyAndFashionType from BeautyAndFashionTransaction where TransactionID={id};").AsList<dynamic>();
                             BeautyAndFashionTransaction beautyAndFashionTransaction = new BeautyAndFashionTransaction
                             {
                                 _Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
-                                _BeautyAndFashionType = type[0].BeautyAndFashionType,
+                                _BeautyAndFashionType =  (BeautyAndFashionType)Enum.Parse(typeof(BeautyAndFashionType), categoryData[0].BeautyAndFashionType)
                             };
-                            list.Add(beautyAndFashionTransaction);
+                            outputList.Add(beautyAndFashionTransaction);
                             break;
-
-                    
+                        #endregion
 
                         default:
-                            // TODO: treba se dodati error poruka c:(ili code)
-                            throw new RavenException("El si misleo il si zeleo");
+                            // TODO: Create error messages and codes for exceptions.
+                            throw new RavenException("Database read failure.");
                     }
                 }
-               
             }
+            #endregion
 
-            return list;
+            //return the list
+            return outputList;
         }
-        public static void SaveData()
+
+        /// <summary>
+        /// Saves differences in the database with the <paramref name="inputList"/>.
+        /// </summary>
+        /// <param name="inputList">Reference to the list that's to be saved to the database.</param>
+        public static void SaveData(ref List<Transaction> inputList)
         {
-        
-        
+
         }
     }
 }
