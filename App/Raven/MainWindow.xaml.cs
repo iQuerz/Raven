@@ -1,4 +1,5 @@
-﻿using App;
+﻿using App.Business;
+using App.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,8 @@ namespace Raven
 
         private void App_OnLoad(object sender, RoutedEventArgs e)
         {
-            DBInterface.LoadData();
+            List<Transaction> testList = DBInterface.LoadData();
+            DBInterface.SaveData(ref testList);
         }
     }
 }
