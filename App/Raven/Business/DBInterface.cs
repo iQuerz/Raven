@@ -47,7 +47,7 @@ namespace App.Business
                             var categoryData = dbConnection.Query<dynamic>($"Select IncomeTransactionType from IncomeTransaction where TransactionID={id};").AsList<dynamic>();
                             IncomeTransaction incomeTransaction = new IncomeTransaction
                             {
-                                _Date = DateTime.Parse(date),
+                                //_Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
@@ -62,7 +62,7 @@ namespace App.Business
                             categoryData = dbConnection.Query<dynamic>($"Select Resolved,PayBack from LoanTransaction where TransactionID={id};").AsList<dynamic>();
                             LoanTransaction loanTransaction = new LoanTransaction
                             {
-                                _Date = DateTime.Parse(date),
+                                //_Date = DateTime.Parse(date),
                                 _Description = description,
                                 _ID = id,
                                 _Value = value,
@@ -192,8 +192,98 @@ namespace App.Business
         /// </summary>
         /// <param name="inputList">Reference to the list that's to be saved to the database.</param>
         public static void SaveData(ref List<Transaction> inputList)
-        {
+        {   
+            // Filling transactionData list with data from DB 
+            var transactionData = LoadData();
+            // Checking for differences with DB and syncing data
+            #region DB Sync
+            int count = inputList.Count;
+            for(int i = 0; i < count; i++)
+            {
+                if (!inputList[i].Equals(transactionData[i]))
+                {
+                    // Overwriting all DB values with values from inputList in element
+                    using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                    {
+                        dbConnection.Execute($"Update Transactions" +
+                            $" set Value = {inputList[i]._Value}, Date = '{inputList[i]._Date}', Description = '{inputList[i]._Description}'" +
+                            $" where ID={inputList[i]._ID};");
+                        switch (inputList[i].GetType().Name)
+                        {
+                            #region IncomeTransaction
+                            case "IncomeTransaction":
+                                dbConnection.Execute("Update IncomeTransaction" +
+                                    $" set IncomeTransactionType = '{inputList[i].GetTransactionType()}'" +
+                                    $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
 
+                            #region LoanTransaction
+                            case "LoanTransaction":
+                                dbConnection.Execute("Update LoanTransaction" +
+                                    $" set Resolved = {inputList[i].GetTransactionStatus()}, PayBack = {inputList[i].GetTransactionPB()}" +
+                                    $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
+
+                            #region HealthTransaction
+                            case "HealthTransaction":
+                                dbConnection.Execute("Update HealthTransaction" +
+                                    $" set HealthTransactionType = '{inputList[i].GetTransactionType()}'" +
+                                    $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
+
+                            #region GroceryTransaction
+                            case "GroceryTransaction":
+                                break;
+                            #endregion
+
+                            #region SavingsTransaction
+                            case "SavingsTransaction":
+                                break;
+                            #endregion
+
+                            #region EntertainmentTransaction
+                            case "EntertainmentTransaction":
+                                dbConnection.Execute("Update EntertainmentTransaction" +
+                                    $" set EntertainmentType = '{inputList[i].GetTransactionType()}' " +
+                                    $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
+
+                            #region DebtTransaction
+                            case "DebtTransaction":
+                                dbConnection.Execute("Update DebtTransaction" +
+                                    $" set Resolved = {inputList[i].GetTransactionStatus()}, PaidBack = {inputList[i].GetTransactionPB()}" +
+                                    $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
+
+                            #region Bills
+                            case "Bills":
+                                dbConnection.Execute("Update Bills" +
+                                    $" set BillType = '{inputList[i].GetTransactionType()}'" +
+                                    $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
+
+                            #region Beauty&Fashion
+                            case "BeautyAndFashionTransaction":
+                                dbConnection.Execute("Update BeautyAndFashionTransaction" +
+                                    $" set BeautyAndFashionType = '{inputList[i].GetTransactionType()}'" +
+                                    $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
+
+                            default:
+                                // TODO: Create error messages and codes for exceptions.
+                                throw new RavenException("Database sync failure.");
+                        }
+                    }
+                }
+            }
+            #endregion
         }
     }
 }
