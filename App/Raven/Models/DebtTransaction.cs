@@ -9,5 +9,15 @@ namespace App.Models
     {
         public bool _Status { get; set; }
         public double _PaidBack { get; set; }
+
+        public override int GetTransactionStatus()
+        {
+            return Convert.ToInt32(_Status);
+        }
+
+        public override double GetTransactionPB()
+        {
+            return _PaidBack;
+        }
     }
 }

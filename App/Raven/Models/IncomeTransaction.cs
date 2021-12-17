@@ -9,5 +9,10 @@ namespace App.Models
     public class IncomeTransaction : Transaction
     {
         public IncomeTransactionType _IncomeTransactionType { get; set; }
+
+        public override string GetTransactionType()
+        {
+            return _IncomeTransactionType.ToString();
+        }
     }
 }

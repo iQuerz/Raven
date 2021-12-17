@@ -9,5 +9,10 @@ namespace App.Models
     public class Bills : Transaction
     {
         public BillType _BillType { get; set; }
+
+        public override string GetTransactionType()
+        {
+            return _BillType.ToString();
+        }
     }
 }

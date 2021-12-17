@@ -9,5 +9,10 @@ namespace App.Models
     public class BeautyAndFashionTransaction : Transaction 
     {
         public BeautyAndFashionType _BeautyAndFashionType { get; set; }
+
+        public override string GetTransactionType()
+        {
+            return _BeautyAndFashionType.ToString();
+        }
     }
 }
