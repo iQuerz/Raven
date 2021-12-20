@@ -175,6 +175,20 @@ namespace App.Business
                             break;
                         #endregion
 
+                        #region UncategorizedTransaction
+                        case "UncategorizedTransaction":
+                            UncategorizedTransaction uncategorizedTransaction = new UncategorizedTransaction
+                            {
+                                _Date = DateTime.Parse(date),
+                                _Description = description,
+                                _ID = id,
+                                _Value = value,
+                            };
+                            outputList.Add(uncategorizedTransaction);
+                            break;
+                        #endregion
+
+
                         default:
                             // TODO: Create error messages and codes for exceptions.
                             throw new RavenException("Database read failure.");
@@ -273,6 +287,11 @@ namespace App.Business
                                 dbConnection.Execute("Update BeautyAndFashionTransaction" +
                                     $" set BeautyAndFashionType = '{inputList[i].GetTransactionType()}'" +
                                     $" where TransactionID = {inputList[i]._ID};");
+                                break;
+                            #endregion
+
+                            #region UncategorizedTransaction
+                            case "UncategorizedTransaction":
                                 break;
                             #endregion
 
