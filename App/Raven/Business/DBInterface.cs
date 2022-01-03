@@ -14,6 +14,8 @@ namespace App.Business
     {
         private static readonly string connectionString = "Data Source=.\\Data.db;Version=3;";
 
+        #region Load&Save
+
         /// <summary>
         /// Loads the data from database onto a list.
         /// </summary>
@@ -28,7 +30,7 @@ namespace App.Business
             using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
             {
                 // Get all the transactions from "Transactions" table into a "transactionData" list.
-                var transactionsData = dbConnection.Query<dynamic>("Select * from Transactions;", new DynamicParameters()).AsList<dynamic>();
+                var transactionsData = dbConnection.Query<dynamic>("Select * from Transactions;", new DynamicParameters()).AsList();
                 foreach (dynamic transaction in transactionsData)
                 {
                     // Extract all the columns into variables
@@ -44,7 +46,7 @@ namespace App.Business
                     {
                         #region IncomeTransaction
                         case "IncomeTransaction":
-                            var categoryData = dbConnection.Query<dynamic>($"Select IncomeTransactionType from IncomeTransaction where TransactionID={id};").AsList<dynamic>();
+                            var categoryData = dbConnection.Query<dynamic>($"Select IncomeTransactionType from IncomeTransaction where TransactionID={id};").AsList();
                             IncomeTransaction incomeTransaction = new IncomeTransaction
                             {
                                 //_Date = DateTime.Parse(date),
@@ -59,7 +61,7 @@ namespace App.Business
 
                         #region LoanTransaction
                         case "LoanTransaction":
-                            categoryData = dbConnection.Query<dynamic>($"Select Resolved,PayBack from LoanTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select Resolved,PayBack from LoanTransaction where TransactionID={id};").AsList();
                             LoanTransaction loanTransaction = new LoanTransaction
                             {
                                 //_Date = DateTime.Parse(date),
@@ -75,7 +77,7 @@ namespace App.Business
 
                         #region HealthTransaction
                         case "HealthTransaction":
-                            categoryData = dbConnection.Query<dynamic>($"Select HealthTransactionType from HealthTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select HealthTransactionType from HealthTransaction where TransactionID={id};").AsList();
                             HealthTransaction healthTransaction = new HealthTransaction
                             {
                                 _Date = DateTime.Parse(date),
@@ -116,7 +118,7 @@ namespace App.Business
 
                         #region EntertainmentTransaction
                         case "EntertainmentTransaction":
-                            categoryData = dbConnection.Query<dynamic>($"Select EntertainmentType from EntertainmentTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select EntertainmentType from EntertainmentTransaction where TransactionID={id};").AsList();
                             EntertainmentTransaction entertainmentTransaction = new EntertainmentTransaction
                             {
                                 _Date = DateTime.Parse(date),
@@ -131,7 +133,7 @@ namespace App.Business
 
                         #region DebtTransaction
                         case "DebtTransaction":
-                            categoryData = dbConnection.Query<dynamic>($"Select Resolved,PaidBack from DebtTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select Resolved,PaidBack from DebtTransaction where TransactionID={id};").AsList();
                             DebtTransaction debtTransaction = new DebtTransaction
                             {
                                 _Date = DateTime.Parse(date),
@@ -147,7 +149,7 @@ namespace App.Business
 
                         #region Bills
                         case "Bills":
-                            categoryData = dbConnection.Query<dynamic>($"Select BillType from Bills where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select BillType from Bills where TransactionID={id};").AsList();
                             Bills bill = new Bills
                             {
                                 _Date = DateTime.Parse(date),
@@ -162,7 +164,7 @@ namespace App.Business
 
                         #region Beauty&Fashion
                         case "BeautyAndFashionTransaction":
-                            categoryData = dbConnection.Query<dynamic>($"Select BeautyAndFashionType from BeautyAndFashionTransaction where TransactionID={id};").AsList<dynamic>();
+                            categoryData = dbConnection.Query<dynamic>($"Select BeautyAndFashionType from BeautyAndFashionTransaction where TransactionID={id};").AsList();
                             BeautyAndFashionTransaction beautyAndFashionTransaction = new BeautyAndFashionTransaction
                             {
                                 _Date = DateTime.Parse(date),
@@ -219,9 +221,9 @@ namespace App.Business
                     // Overwriting all DB values with values from inputList in element
                     using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
                     {
-                        dbConnection.Execute($"Update Transactions" +
-                            $" set Value = {inputList[i]._Value}, Date = '{inputList[i]._Date}', Description = '{inputList[i]._Description}'" +
-                            $" where ID={inputList[i]._ID};");
+                        dbConnection.Execute($"UPDATE Transactions" +
+                            $" SET Value = {inputList[i]._Value}, Date = '{inputList[i]._Date}', Description = '{inputList[i]._Description}'" +
+                            $" WHERE ID={inputList[i]._ID};");
                         switch (inputList[i].GetType().Name)
                         {
                             #region IncomeTransaction
@@ -304,5 +306,132 @@ namespace App.Business
             }
             #endregion
         }
+
+        #endregion
+
+        #region AppSettings
+        // TODO: test if all the AppSettings methods are working as intended.
+
+        #region FirstBoot
+        public static bool GetFirstBoot()
+        {
+            using(IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select FirstBoot from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .FirstBoot;
+
+                // SQLite doesn't support booleans. We use integer 0's and 1's.
+                return Convert.ToBoolean(Convert.ToInt16(settingValue));
+            }
+        }
+        public static void SetFirstBoot(bool newValue)
+        {
+            string updatedSetting;
+            updatedSetting = newValue ? "1" : "0";
+
+            using(IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set FirstBoot = {updatedSetting};");
+            }
+        }
+        #endregion
+
+        #region DefaultCurrency
+        public static string GetDefaultCurrency()
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select DefaultCurrency from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .DefaultCurrency;
+
+                return settingValue;
+            }
+        }
+        public static void SetDefaultCurrency(string newValue)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set DefaultCurrency = '{newValue}';");
+            }
+        }
+        #endregion
+
+        #region DefaultLanguage
+        public static string GetDefaultLanguage()
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select DefaultLanguage from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .DefaultLanguage;
+
+                return settingValue;
+            }
+        }
+        public static void SetDefaultLanguage(string newValue)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set DefaultLanguage = '{newValue}';");
+            }
+        }
+        #endregion
+
+        #region AutoSavePeriod
+        public static int GetAutoSavePeriod()
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select AutoSavePeriod from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .AutoSavePeriod;
+
+                // SQLite doesn't support booleans. We use integer 0's and 1's.
+                return Convert.ToInt32(settingValue);
+            }
+        }
+        public static void SetAutoSavePeriod(int newValue)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set AutoSavePeriod = {newValue};");
+            }
+        }
+        #endregion
+
+        #region DarkMode
+        public static bool GetDarkMode()
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select DarkMode from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .DarkMode;
+
+                // SQLite doesn't support booleans. We use integer 0's and 1's.
+                return Convert.ToBoolean(Convert.ToInt16(settingValue));
+            }
+        }
+        public static void SetDarkMode(bool newValue)
+        {
+            string updatedSetting;
+            updatedSetting = newValue ? "1" : "0";
+
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set DarkMode = {updatedSetting};");
+            }
+        }
+        #endregion
+
+        #endregion
+
     }
 }
