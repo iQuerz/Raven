@@ -57,7 +57,7 @@
                 DBInterface.SetDarkMode(value);
             }
         }
-        public static int FontSize
+        public static double FontSize
         {
             get
             {
