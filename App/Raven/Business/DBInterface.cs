@@ -224,6 +224,7 @@ namespace App.Business
                         dbConnection.Execute($"UPDATE Transactions" +
                             $" SET Value = {inputList[i]._Value}, Date = '{inputList[i]._Date}', Description = '{inputList[i]._Description}'" +
                             $" WHERE ID={inputList[i]._ID};");
+
                         switch (inputList[i].GetType().Name)
                         {
                             #region IncomeTransaction
@@ -392,7 +393,6 @@ namespace App.Business
                     .AsList()[0]
                     .AutoSavePeriod;
 
-                // SQLite doesn't support booleans. We use integer 0's and 1's.
                 return Convert.ToInt32(settingValue);
             }
         }
@@ -431,13 +431,73 @@ namespace App.Business
         }
         #endregion
 
+        #region FontSize
+        public static int GetFontSize()
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select FontSize from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .FontSize;
+
+                return Convert.ToInt32(settingValue);
+            }
+        }
+        public static void SetFontSize(int newValue)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set FontSize = {newValue};");
+            }
+        }
+        #endregion
+
+        #region DateFormat
+        public static string GetDateFormat()
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select DateFormat from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .DateFormat;
+
+                return settingValue;
+            }
+        }
+        public static void SetDateFormat(string newValue)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set DateFormat = '{newValue}';");
+            }
+        }
+        #endregion
+
         #endregion
 
         #region Other
+
         public static void Purge()
         {
             // TODO: Temporary backup + Deletion of all data.
         }
+
+        /// <summary>
+        /// DANGEROUS. Use at your own risk and test your query before executing it programmatically.
+        /// </summary>
+        /// <param name="query">Query string to be executed</param>
+        public static List<dynamic> ExecuteCustomQuery(string query)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                return dbConnection
+                    .Query<dynamic>(query, new DynamicParameters())
+                    .AsList();
+            }
+        }
+
         #endregion
 
     }

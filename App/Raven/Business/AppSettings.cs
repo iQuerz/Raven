@@ -57,5 +57,27 @@
                 DBInterface.SetDarkMode(value);
             }
         }
+        public static int FontSize
+        {
+            get
+            {
+                return DBInterface.GetFontSize();
+            }
+            set
+            {
+                DBInterface.SetFontSize(value);
+            }
+        }
+        public static string DateFormat
+        {
+            get
+            {
+                return DBInterface.GetDateFormat();
+            }
+            set
+            {
+                DBInterface.SetDateFormat(value);
+            }
+        }
     }
 }
