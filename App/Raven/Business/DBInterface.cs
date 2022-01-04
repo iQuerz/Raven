@@ -10,7 +10,7 @@ using App.Models;
 
 namespace App.Business
 {
-    public static class DBInterface
+    public interface DBInterface
     {
         private static readonly string connectionString = "Data Source=.\\Data.db;Version=3;";
 
