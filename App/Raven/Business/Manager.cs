@@ -1,6 +1,8 @@
-﻿using App.Models.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using App.Business.Types;
+using App.Models.Base;
 
 namespace App.Business
 {
@@ -13,8 +15,11 @@ namespace App.Business
             _Transactions = new List<Transaction>();
         }
 
-
         #region Balance methods
+
+        /// <summary>
+        /// Gets the balance sum of all transactions. This field is read only.
+        /// </summary>
         public double Balance
         {
             get
@@ -49,19 +54,72 @@ namespace App.Business
             return balance;
         }
 
-        public double GetBalanceByDate(string mode)//???
+        /// <summary>
+        /// Gets balance sum of incoming, outgoing or all transactions for a given period, matching(or not) a category.
+        /// </summary>
+        /// <param name="mode">Choose either incoming, outgoing or all transactions.</param>
+        /// <param name="type">Transaction category to match. If left out, all transactions will be matched.</param>
+        /// <param name="startDate">Starting date to match. If left out, we will look from the oldest transaction.</param>
+        /// <param name="endDate">Ending date to match. If left out, current date will be taken.</param>
+        /// <returns>Balance sum of transactions that match the limitations.</returns>
+        public double GetBalanceByPeriod(TransactionType mode, Type type = null, DateTime? startDate = null, DateTime? endDate = null)
         {
-            // TODO: Talk about implementation of GetBalanceByDate
-            return 0;
+            // set defaults
+            if (type == null)
+                type = typeof(Transaction);
+
+            if (startDate == null)
+                startDate = DateTime.MinValue;
+
+            if (endDate == null)
+                endDate = DateTime.Now;
+
+            // double result to return.
+            double balanceOut = 0;
+
+            // iterate through each transaction and check if it fits.
+            foreach(Transaction t in _Transactions)
+            {
+                if(type == typeof(Transaction) || t.GetType() == type)
+                {
+                    if (t._Date < endDate && t._Date > startDate)
+                    {
+                        if(mode == TransactionType.Incoming && t._Value > 0)
+                        {
+                            balanceOut += t._Value;
+                            continue;
+                        }
+                        if(mode == TransactionType.Outgoing && t._Value < 0)
+                        {
+                            balanceOut += t._Value;
+                            continue;
+                        }
+                        balanceOut += t._Value;
+                    }
+                }
+            }
+
+            return balanceOut;
         }
+
         #endregion
 
         #region Transaction methods
+
         /// <summary>
-        /// Returns a List of recent <paramref name="numberOfTransactions"/> transactions.
+        /// Saves a new transaction inside internal list.
         /// </summary>
-        /// <param name="numberOfTransactions">Number of transactions to return. Send a non-positive number to return the whole list.</param>
-        /// <returns></returns>
+        /// <param name="transaction">Transaction object to be added.</param>
+        public void InsertTransaction(Transaction transaction)
+        {
+            _Transactions.Add(transaction);
+        }
+
+        /// <summary>
+        /// Gets recent transactions.
+        /// </summary>
+        /// <param name="numberOfTransactions">Number of transactions to return.</param>
+        /// <returns>Returns a List of recent <paramref name="numberOfTransactions"/> transactions. Send a non-positive number to return the whole list.</returns>
         public List<Transaction> GetTransactions(int numberOfTransactions)
         {
             if (numberOfTransactions <= 0)
@@ -71,13 +129,53 @@ namespace App.Business
         }
 
         /// <summary>
-        /// Saves a new transaction.
+        /// Gets list of incoming, outgoing or all transactions for a given period, matching(or not) a category.
         /// </summary>
-        /// <param name="transaction">Transaction object to be added.</param>
-        public void InsertTransaction(Transaction transaction)
+        /// <param name="mode">Choose either incoming, outgoing or all transactions.</param>
+        /// <param name="type">Transaction category to match. If left out, all transactions will be matched.</param>
+        /// <param name="startDate">Starting date to match. If left out, we will look from the oldest transaction.</param>
+        /// <param name="endDate">Ending date to match. If left out, current date will be taken.</param>
+        /// <returns>List of transactions that match the limitations.</returns>
+        public List<Transaction> GetTransactionsByPeriod(TransactionType mode, Type type = null, DateTime? startDate = null, DateTime? endDate = null)
         {
-            //TODO: Add a transaction through DBInterface.
+            // set default values
+            if (type == null)
+                type = typeof(Transaction);
+
+            if (startDate == null)
+                startDate = DateTime.MinValue;
+
+            if (endDate == null)
+                endDate = DateTime.Now;
+
+            // list to be returned.
+            List<Transaction> transactionsOut = new List<Transaction>();
+
+            // iterate through each transaction and check if it fits.
+            foreach (Transaction transaction in _Transactions)
+            {
+                if (type == typeof(Transaction) || transaction.GetType() == type)
+                {
+                    if (transaction._Date <= endDate && transaction._Date >= startDate)
+                    {
+                        if (mode == TransactionType.Incoming && transaction._Value > 0)
+                        {
+                            transactionsOut.Add(transaction);
+                            continue;
+                        }
+                        if (mode == TransactionType.Outgoing && transaction._Value < 0)
+                        {
+                            transactionsOut.Add(transaction);
+                            continue;
+                        }
+                        transactionsOut.Add(transaction);
+                    }
+                }
+            }
+
+            return transactionsOut;
         }
+
         #endregion
 
         #region Load & Save
@@ -94,12 +192,13 @@ namespace App.Business
 
         #region Other
         /// <summary>
-        /// Deletes the database.
+        /// Creates a temporary backup and deletes the database.
         /// </summary>
         public void Purge()
         {
-            //TODO: Call the purge() method from DBInterface.
+            DBInterface.Purge();
         }
         #endregion
+
     }
 }

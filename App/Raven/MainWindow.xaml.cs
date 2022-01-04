@@ -30,15 +30,14 @@ namespace Raven
 
         private void App_OnLoad(object sender, RoutedEventArgs e)
         {
-
             if (AppSettings.FirstBoot)
             {
                 //open first boot menu
+                AppSettings.FirstBoot = false;
             }
 
             List<Transaction> testList = DBInterface.LoadData();
             DBInterface.SaveData(ref testList);
-
         }
     }
 }

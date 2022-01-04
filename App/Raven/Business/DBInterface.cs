@@ -433,5 +433,12 @@ namespace App.Business
 
         #endregion
 
+        #region Other
+        public static void Purge()
+        {
+            // TODO: Temporary backup + Deletion of all data.
+        }
+        #endregion
+
     }
 }

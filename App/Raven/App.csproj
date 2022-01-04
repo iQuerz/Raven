@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Business\Types\**" />
-    <EmbeddedResource Remove="Business\Types\**" />
-    <None Remove="Business\Types\**" />
-    <Page Remove="Business\Types\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Data.db" />
   </ItemGroup>
 
