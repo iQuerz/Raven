@@ -14,7 +14,7 @@ namespace App.Business
     {
         private static readonly string connectionString = "Data Source=.\\Data.db;Version=3;";
 
-        #region Load&Save
+        #region Insert, Load & Save
 
         /// <summary>
         /// Loads the data from database onto a list.
@@ -308,6 +308,102 @@ namespace App.Business
             #endregion
         }
 
+        /// <summary>
+        /// Inserts a new transaction into the database.
+        /// </summary>
+        /// <param name="t">Transaction to be inserted.</param>
+        /// <returns>Passed transaction, with ID field populated.</returns>
+        public static Transaction InsertTransaction(Transaction t)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var ID = Convert.ToInt32(dbConnection.
+                    Query<dynamic>("Select seq From sqlite_sequence Where name = 'Transactions'", new DynamicParameters())
+                    .AsList()[0].seq) + 1;
+                t._ID = ID;
+
+                dbConnection.Execute("Insert into Transactions (Value, Date, Description, Child)" +
+                    $"Values ({t._Value}, {t._Date}, {t._Description}, {t.GetType().Name})");
+
+                switch (t.GetType().Name)
+                {
+                    #region IncomeTransaction
+                    case "IncomeTransaction":
+                        dbConnection.Execute("Insert Into IncomeTransaction (IncomeTransactionType, TransactionID)" +
+                            $" Values ('{t.GetTransactionType()}', {t._ID});");
+                        break;
+                    #endregion
+
+                    #region LoanTransaction
+                    case "LoanTransaction":
+                        dbConnection.Execute("Insert Into LoanTransaction (Resolved, PayBack, TransactionID)" +
+                            $" Values ({t.GetTransactionStatus()}, {t.GetTransactionPB()}, {t._ID});");
+                        break;
+                    #endregion
+
+                    #region HealthTransaction
+                    case "HealthTransaction":
+                        dbConnection.Execute("Insert Into HealthTransaction (HealthTransactionType, TransactionID)" +
+                            $" Values ('{t.GetTransactionType()}', {t._ID});");
+                        break;
+                    #endregion
+
+                    #region GroceryTransaction
+                    case "GroceryTransaction":
+                        dbConnection.Execute("Insert Into GroceryTransaction (TransactionID)" +
+                            $" Values ({t._ID});");
+                        break;
+                    #endregion
+
+                    #region SavingsTransaction
+                    case "SavingsTransaction":
+                        dbConnection.Execute("Insert Into SavingsTransaction (TransactionID)" +
+                            $" Values ({t._ID});");
+                        break;
+                    #endregion
+
+                    #region EntertainmentTransaction
+                    case "EntertainmentTransaction":
+                        dbConnection.Execute("Insert Into EntertainmentTransaction (EntertainmentType, TransactionID)" +
+                            $" Values ('{t.GetTransactionType()}', {t._ID});");
+                        break;
+                    #endregion
+
+                    #region DebtTransaction
+                    case "DebtTransaction":
+                        dbConnection.Execute("Insert Into DebtTransaction (Resolved, PaidBack, TransactionID)" +
+                            $" Values ({t.GetTransactionStatus()}, {t.GetTransactionPB()}, {t._ID});");
+                        break;
+                    #endregion
+
+                    #region Bills
+                    case "Bills":
+                        dbConnection.Execute("Insert Into Bills (BillType, TransactionID)" +
+                            $" Values ('{t.GetTransactionType()}', {t._ID});");
+                        break;
+                    #endregion
+
+                    #region Beauty&Fashion
+                    case "BeautyAndFashionTransaction":
+                        dbConnection.Execute("Insert Into BeautyAndFashionTransaction (BeautyAndFashionType, TransactionID)" +
+                            $" Values ('{t.GetTransactionType()}', {t._ID});");
+                        break;
+                    #endregion
+
+                    #region UncategorizedTransaction
+                    case "UncategorizedTransaction":
+                        break;
+                    #endregion
+
+                    default:
+                        // TODO: Create error messages and codes for exceptions.
+                        throw new RavenException("Transaction insertion failed.");
+                }
+            }
+
+            return t;
+        }
+
         #endregion
 
         #region AppSettings
@@ -432,7 +528,7 @@ namespace App.Business
         #endregion
 
         #region FontSize
-        public static int GetFontSize()
+        public static double GetFontSize()
         {
             using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
             {
@@ -444,7 +540,7 @@ namespace App.Business
                 return Convert.ToInt32(settingValue);
             }
         }
-        public static void SetFontSize(int newValue)
+        public static void SetFontSize(double newValue)
         {
             using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
             {

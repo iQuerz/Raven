@@ -112,7 +112,7 @@ namespace App.Business
         /// <param name="transaction">Transaction object to be added.</param>
         public void InsertTransaction(Transaction transaction)
         {
-            _Transactions.Add(transaction);
+            _Transactions.Add(DBInterface.InsertTransaction(transaction));
         }
 
         /// <summary>

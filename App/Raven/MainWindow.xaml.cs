@@ -32,7 +32,7 @@ namespace Raven
         {
             if (AppSettings.FirstBoot)
             {
-                AppSettings.FontSize = this.FontSize;
+                AppSettings.FontSize = FontSize;
                 //open first boot menu
                 AppSettings.FirstBoot = false;
             }
