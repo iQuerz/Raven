@@ -409,6 +409,28 @@ namespace App.Business
         #region AppSettings
         // TODO: test if all the AppSettings methods are working as intended.
 
+        #region Username
+        public static string GetUsername()
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                var settingValue = dbConnection
+                    .Query<dynamic>("Select Username from AppSettings;", new DynamicParameters())
+                    .AsList()[0]
+                    .Username;
+
+                return settingValue;
+            }
+        }
+        public static void SetUsername(string newValue)
+        {
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                dbConnection.Execute($"Update AppSettings Set Username = '{newValue}';");
+            }
+        }
+        #endregion
+
         #region FirstBoot
         public static bool GetFirstBoot()
         {

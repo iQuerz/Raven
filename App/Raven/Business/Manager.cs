@@ -31,6 +31,27 @@ namespace App.Business
             }
         }
 
+        public string BalanceString
+        {
+            get
+            {
+                string balanceStr = Balance.ToString();
+                int i = balanceStr.IndexOf('.');
+                if (i == -1)
+                {
+                    i = balanceStr.Length - 3;
+                    balanceStr += ".00";
+                }
+
+                while (i >= 0)
+                {
+                    balanceStr = balanceStr.Insert(i, ",");
+                    i -= 3;
+                }
+                return balanceStr;
+            }
+        }
+
         /// <summary>
         /// Returns total balance of each transaction in a given category, for the last <paramref name="timeSpan"/> days.
         /// </summary>

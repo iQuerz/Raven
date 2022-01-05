@@ -2,6 +2,17 @@
 {
     public interface AppSettings
     {
+        public static string Username
+        {
+            get
+            {
+                return DBInterface.GetUsername();
+            }
+            set
+            {
+                DBInterface.SetUsername(value);
+            }
+        }
         public static bool FirstBoot
         {
             get
