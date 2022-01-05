@@ -36,6 +36,14 @@ namespace Raven
             autoSaveTimer.Tick += AutoSaveTimer_Tick;
             autoSaveTimer.Start();
             #endregion
+
+            #region GreetingTimer
+            DispatcherTimer greetingTimer = new DispatcherTimer();
+            greetingTimer.Interval = TimeSpan.FromMinutes(30);
+            greetingTimer.Tick += GreetingTimer_Tick;
+            greetingTimer.Start();
+            #endregion
+
         }
 
         private void App_OnLoad(object sender, RoutedEventArgs e)
@@ -46,7 +54,7 @@ namespace Raven
                 //open first boot menu
                 AppSettings.FirstBoot = false;
             }
-            GreetingLabel.Content = "Good evening, " + AppSettings.Username;
+            GreetingLabel.Content = GetGreetingMessage();
 
             _manager.loadTransactions();
             BalanceLabel.Content = _manager.BalanceString + " " + AppSettings.DefaultCurrency;
@@ -56,9 +64,24 @@ namespace Raven
                 TransactionsList.Items.Add(t._Description + ": " + t._Value + AppSettings.DefaultCurrency);
             }
         }
+
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
             _manager.saveTransactions();
+        }
+        private void GreetingTimer_Tick(object sender, EventArgs e)
+        {
+            GreetingLabel.Content = GetGreetingMessage();
+        }
+
+        private string GetGreetingMessage()
+        {
+            int h = DateTime.Now.Hour;
+            if(h >= 5 && h < 12)
+                return "Good morning, " + AppSettings.Username;
+            if(h >= 12 && h < 18)
+                return "Good afternoon, " + AppSettings.Username;
+            return "Good evening, " + AppSettings.Username;
         }
     }
 }

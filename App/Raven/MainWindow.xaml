@@ -12,11 +12,11 @@
         Background="Transparent"
         Width="1600" Height="900"
         MinWidth="1280" MinHeight="720">
-    
+
     <Border Background="#33333d"
             CornerRadius="10">
         <Grid Name="MainGrid">
-            
+
             <!--#region Definitions-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
@@ -29,7 +29,7 @@
                 <RowDefinition Height="29*"/>
             </Grid.RowDefinitions>
             <!--#endregion-->
-            
+
             <!--#region CenterScreen-->
             <StackPanel Grid.Column="1" Grid.Row="1">
 
@@ -78,7 +78,8 @@
             <!--#endregion-->
 
             <!--#region Menu Bar-->
-            <StackPanel Grid.Column="2" Grid.Row="0"
+            <StackPanel Grid.Column="0" Grid.Row="0"
+                        Grid.ColumnSpan="3"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
                 <Button x:Name="exitButton"
@@ -89,7 +90,21 @@
                 </Button>
             </StackPanel>
             <!--#endregion-->
-            
+
+            <!--#region Left Strip-->
+            <StackPanel Grid.Column="2" Grid.Row="1"
+                        Grid.RowSpan="2">
+
+            </StackPanel>
+            <!--#endregion-->
+
+            <!--#region Right Strip-->
+            <StackPanel Grid.Column="2" Grid.Row="1"
+                        Grid.RowSpan="2">
+
+            </StackPanel>
+            <!--#endregion-->
+
         </Grid>
     </Border>
 </Window>
