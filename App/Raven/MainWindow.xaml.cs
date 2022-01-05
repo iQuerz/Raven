@@ -46,9 +46,15 @@ namespace Raven
                 //open first boot menu
                 AppSettings.FirstBoot = false;
             }
+            GreetingLabel.Content = "Good evening, " + AppSettings.Username;
 
-            List<Transaction> testList = DBInterface.LoadData();
-            DBInterface.SaveData(ref testList);
+            _manager.loadTransactions();
+            BalanceLabel.Content = _manager.BalanceString + " " + AppSettings.DefaultCurrency;
+
+            foreach(Transaction t in _manager.GetTransactions(3))
+            {
+                TransactionsList.Items.Add(t._Description + ": " + t._Value + AppSettings.DefaultCurrency);
+            }
         }
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {

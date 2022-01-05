@@ -3,10 +3,93 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Raven"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip" AllowsTransparency="True"
+        
+        Background="Transparent"
+        Width="1600" Height="900"
+        MinWidth="1280" MinHeight="720">
+    
+    <Border Background="#33333d"
+            CornerRadius="10">
+        <Grid Name="MainGrid">
+            
+            <!--#region Definitions-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="29*"/>
+                <RowDefinition Height="29*"/>
+            </Grid.RowDefinitions>
+            <!--#endregion-->
+            
+            <!--#region CenterScreen-->
+            <StackPanel Grid.Column="1" Grid.Row="1">
 
-    </Grid>
+                <Label x:Name="GreetingLabel"
+                       Content="Zdravo!"
+                       FontWeight="Bold"
+                       Foreground="#f7f7f7"
+                       Margin="0,50,0,0"
+                       FontSize="80"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+
+                <Label x:Name="BalanceLabel"
+                       Content="0.00RSD"
+                       FontWeight="Bold"
+                       Foreground="#f7f7f7"
+                       Margin="0,50,0,0"
+                       FontSize="100"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+            </StackPanel>
+            <!--#endregion-->
+
+            <!--#region List & Search-->
+            <StackPanel Grid.Column="1" Grid.Row="2">
+                <TextBox x:Name="SearchBox"
+                         Text="Search"
+                         Background="#424250"
+                         Foreground="#f7f7f7"
+                         BorderThickness="2"
+                         BorderBrush="#c93e70"
+                         FontSize="30"
+                         Margin="20"
+                         HorizontalAlignment="Stretch"/>
+
+                <ListView x:Name="TransactionsList"
+                          Background="#424250"
+                          Foreground="#f7f7f7"
+                          BorderThickness="2"
+                          BorderBrush="#c93e70"
+                          FontSize="30"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Margin="20,0,20,20"/>
+            </StackPanel>
+            <!--#endregion-->
+
+            <!--#region Menu Bar-->
+            <StackPanel Grid.Column="2" Grid.Row="0"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button x:Name="exitButton"
+                        Margin="0,0,5,0"
+                        Background="Transparent"
+                        BorderThickness="0">
+                    <Image Source="https://cdn0.iconfinder.com/data/icons/octicons/1024/x-512.png" Stretch="Fill"/>
+                </Button>
+            </StackPanel>
+            <!--#endregion-->
+            
+        </Grid>
+    </Border>
 </Window>
