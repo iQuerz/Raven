@@ -1,4 +1,5 @@
-﻿using App.Business;
+﻿using App;
+using App.Business;
 using App.Models.Base;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,10 @@ namespace Raven
             if (AppSettings.FirstBoot)
             {
                 AppSettings.FontSize = FontSize;
-                //open first boot menu
+
+                FirstBootSetup firstBoot = new FirstBootSetup();
+                firstBoot.ShowDialog();
+
                 AppSettings.FirstBoot = false;
             }
             GreetingLabel.Content = GetGreetingMessage();

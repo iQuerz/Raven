@@ -1,0 +1,185 @@
+﻿<Window x:Class="App.FirstBootSetup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:App"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="NoResize" AllowsTransparency="True"
+        
+        Background="Transparent"
+        Width="1600" Height="900"
+        MinWidth="1280" MinHeight="720">
+    
+    <Border Background="#33333d"
+            CornerRadius="10">
+        
+        <Grid Name="MainGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="8*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Name="WelcomeStack"
+                Grid.Row="0" Grid.Column="0"
+                Grid.ColumnSpan="2">
+                
+                <Label x:Name="GreetingLabel"
+                       FontWeight="Bold"
+                       Foreground="#f7f7f7"
+                       Margin="0,50,0,0"
+                       FontSize="30"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center">
+                    <TextBlock TextAlignment="Center">
+                        Hi! Glad to have you here!
+                        <LineBreak/>
+                        Let's setup a few things before you start:
+                    </TextBlock>
+                </Label>
+                
+            </StackPanel>
+
+            
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+
+                <Label Name="UsernameLabel"
+                    Grid.Row="0" Grid.Column="1"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    FontSize="15"
+                    HorizontalContentAlignment="Right"
+                    VerticalAlignment="Center">
+                    How would you like us to call you?
+                </Label>
+                <TextBox x:Name="UsernameInput"
+                    Grid.Row="0" Grid.Column="2"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    Background="Transparent"
+                    BorderBrush="#c93e70"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center">                    
+                </TextBox>
+
+                <Label Name="LanguageLabel"
+                    Grid.Row="1" Grid.Column="1"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    FontSize="15"
+                    HorizontalContentAlignment="Right"
+                    VerticalAlignment="Center">
+                    Language?
+                </Label>
+                <ComboBox x:Name="LanguageInput"
+                    Grid.Row="1" Grid.Column="2"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    Background="Transparent"
+                    BorderBrush="#c93e70"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center">
+                </ComboBox>
+                
+                <Label Name="FontSizeLabel"
+                    Grid.Row="2" Grid.Column="1"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    FontSize="15"
+                    HorizontalContentAlignment="Right"
+                    VerticalAlignment="Center">
+                    How blind are you?
+                </Label>
+                <Slider x:Name="FontSizeInput"
+                    Grid.Row="2" Grid.Column="2"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    Background="Transparent"
+                    BorderBrush="#c93e70"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center"
+                    Minimum="11" Maximum="30">
+                </Slider>
+
+                <Label Name="CurrencyLabel"
+                    Grid.Row="3" Grid.Column="1"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    FontSize="15"
+                    HorizontalContentAlignment="Right"
+                    VerticalAlignment="Center">
+                    What's your preferred currency?
+                </Label>
+                <ComboBox x:Name="CurrencyInput"
+                    Grid.Row="3" Grid.Column="2"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    Background="Transparent"
+                    BorderBrush="#c93e70"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center">
+                </ComboBox>
+
+                <Label Name="DarkModeLabel"
+                    Grid.Row="4" Grid.Column="1"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    FontSize="15"
+                    HorizontalContentAlignment="Right"
+                    VerticalAlignment="Center">
+                    Are you with us on the Dark side?
+                </Label>
+                <ComboBox x:Name="DarkModeInput"
+                    Grid.Row="4" Grid.Column="2"
+                    Margin="10"
+                    Foreground="#f7f7f7"
+                    Background="Transparent"
+                    BorderBrush="#c93e70"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center">
+                </ComboBox>
+
+                <Button x:Name="saveChangesButton"
+                        Grid.Row="5" Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="Save Changes"
+                        FontSize="30"
+                        Padding="20"
+                        Background="#333b3d"
+                        Foreground="#f7f7f7"
+                        BorderBrush="#02BA80"
+                        BorderThickness="5"
+                        ></Button>
+                
+            </Grid>
+            
+        </Grid>
+    </Border>
+    
+</Window>
