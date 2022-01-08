@@ -29,6 +29,7 @@ namespace Raven
             InitializeComponent();
             _manager = new Manager();
             Loaded += App_OnLoad;
+            exitButton.Click += ExitButton_Click;
 
             #region AutoSave Timer Setup
             DispatcherTimer autoSaveTimer = new DispatcherTimer();
@@ -59,7 +60,7 @@ namespace Raven
             _manager.loadTransactions();
             BalanceLabel.Content = _manager.BalanceString + " " + AppSettings.DefaultCurrency;
 
-            foreach(Transaction t in _manager.GetTransactions(3))
+            foreach(Transaction t in _manager.GetTransactions(8))
             {
                 TransactionsList.Items.Add(t._Description + ": " + t._Value + AppSettings.DefaultCurrency);
             }
@@ -72,6 +73,11 @@ namespace Raven
         private void GreetingTimer_Tick(object sender, EventArgs e)
         {
             GreetingLabel.Content = GetGreetingMessage();
+        }
+        private void ExitButton_Click(object sender, EventArgs e)
+        {
+            _manager.saveTransactions();
+            Close();
         }
 
         private string GetGreetingMessage()
