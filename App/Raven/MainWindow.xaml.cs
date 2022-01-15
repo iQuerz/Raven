@@ -93,5 +93,11 @@ namespace Raven
                 return "Good afternoon, " + AppSettings.Username;
             return "Good evening, " + AppSettings.Username;
         }
+
+        private void newTransactionButton_Click(object sender, RoutedEventArgs e)
+        {
+            NewTransactionWindow newTransactionWindow = new NewTransactionWindow();
+            newTransactionWindow.Show();
+        }
     }
 }

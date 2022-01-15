@@ -50,7 +50,7 @@
                        FontSize="100"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"/>
-                
+
             </StackPanel>
             <!--#endregion-->
 
@@ -90,7 +90,7 @@
                         Background="Transparent"
                         BorderThickness="0">
                 </Button>
-                
+
                 <Button x:Name="exitButton"
                         Margin="0,0,5,0"
                         Background="Transparent"
@@ -110,6 +110,13 @@
             <!--#region Right Strip-->
             <StackPanel Grid.Column="2" Grid.Row="1"
                         Grid.RowSpan="2">
+                <Button x:Name="newTransactionButton"
+                        Margin="110,700,0,0"
+                        Background="Transparent"
+                        BorderThickness="0" Height="120" Width="120" RenderTransformOrigin="0.58,0.56"
+                        Click="newTransactionButton_Click">
+                    <Image Source="https://www.pngmart.com/files/21/Add-Button-PNG.png" Stretch="Fill" Height="120" Width="120"/>
+                </Button>
 
             </StackPanel>
             <!--#endregion-->
