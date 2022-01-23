@@ -93,5 +93,11 @@ namespace Raven
                 return "Good afternoon, " + AppSettings.Username;
             return "Good evening, " + AppSettings.Username;
         }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.Show();
+        }
     }
 }
