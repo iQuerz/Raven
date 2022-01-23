@@ -99,5 +99,11 @@ namespace Raven
             SettingsWindow settingsWindow = new SettingsWindow();
             settingsWindow.Show();
         }
+
+        private void newTransactionButton_Click(object sender, RoutedEventArgs e)
+        {
+            NewTransactionWindow newTransactionWindow = new NewTransactionWindow();
+            newTransactionWindow.Show();
+        }
     }
 }
