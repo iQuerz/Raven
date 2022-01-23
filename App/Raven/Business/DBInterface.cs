@@ -1,8 +1,11 @@
 ﻿using Dapper;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
+using System.Threading.Tasks;
 
 using App.Models.Base;
 using App.Models.Types;
@@ -595,11 +598,134 @@ namespace App.Business
 
         #endregion
 
+        #region Import & Export
+
+        /// <summary>
+        /// Exports(Backups) the whole Database to a single file.
+        /// </summary>
+        /// <param name="filepath">Absolute path to the JSON file to which export will be saved.</param>
+        public static async Task ExportDB(string filepath)
+        {
+            string saveFile = "{\"Tables\":[";
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                #region Create json strings from table contents
+
+                #region Transactions
+                var tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from Transactions;", new DynamicParameters());
+                string transactions = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from IncomeTransaction;", new DynamicParameters());
+                string incomeTransaction = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from LoanTransaction;", new DynamicParameters());
+                string loanTransaction = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from DebtTransaction;", new DynamicParameters());
+                string debtTransaction = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from HealthTransaction;", new DynamicParameters());
+                string healthTransaction = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from GroceryTransaction;", new DynamicParameters());
+                string groceryTransaction = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from EntertainmentTransaction;", new DynamicParameters());
+                string entertainmentTransaction = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from Bills;", new DynamicParameters());
+                string bills = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from BeautyAndFashionTransaction;", new DynamicParameters());
+                string bnfTransaction = JsonConvert.SerializeObject(tempTableContent);
+                #endregion
+
+                #region Settings
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from AppSettings;", new DynamicParameters());
+                string appSettings = JsonConvert.SerializeObject(tempTableContent);
+
+                tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from sqlite_sequence;", new DynamicParameters());
+                string sequence = JsonConvert.SerializeObject(tempTableContent);
+                #endregion
+
+                #endregion
+
+                #region Making the JSON
+
+                #region Transactions
+                saveFile += "{\"Table\":\"Transactions\",\"Content\":";
+                saveFile += transactions;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"IncomeTransaction\",\"Content\":";
+                saveFile += incomeTransaction;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"LoanTransaction\",\"Content\":";
+                saveFile += loanTransaction;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"DebtTransaction\",\"Content\":";
+                saveFile += debtTransaction;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"HralthTransaction\",\"Content\":";
+                saveFile += healthTransaction;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"GroceryTransaction\",\"Content\":";
+                saveFile += groceryTransaction;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"Bills\",\"Content\":";
+                saveFile += bills;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"BeautyAndFashionTransaction\",\"Content\":";
+                saveFile += bnfTransaction;
+                saveFile += "},";
+                #endregion
+
+                #region Settings
+                saveFile += "{\"Table\":\"AppSettings\",\"Content\":";
+                saveFile += appSettings;
+                saveFile += "},";
+
+                saveFile += "{\"Table\":\"sqlite_sequence\",\"Content\":";
+                saveFile += sequence;
+                saveFile += "}"; //The end of the array. No need for ','.
+                #endregion
+
+                saveFile += "]}";
+
+                #endregion
+            }
+            await File.WriteAllTextAsync(filepath, saveFile);
+        }
+
+        /// <summary>
+        /// Imports(Restores) the whole Database from a single file.
+        /// </summary>
+        /// <param name="filepath">Absolute path to the JSON file which holds the Database info.</param>
+        /// <returns></returns>
+        public static async Task ImportDB(string filepath)
+        {
+            // TODO: Import DB from a file.
+        }
+
+        #endregion
+
         #region Other
 
+        /// <summary>
+        /// Delete Every single entry from the Database.
+        /// </summary>
         public static void Purge()
         {
-            // TODO: Temporary backup + Deletion of all data.
+            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+            {
+                // TODO: Delete all data from the database.
+            }
         }
 
         /// <summary>

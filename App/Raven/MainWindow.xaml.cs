@@ -48,8 +48,10 @@ namespace Raven
 
         }
 
-        private void App_OnLoad(object sender, RoutedEventArgs e)
+        private async void App_OnLoad(object sender, RoutedEventArgs e)
         {
+            await DBInterface.ExportDB("C:\\Users\\Dzoni\\Desktop\\database.json");
+
             if (AppSettings.FirstBoot)
             {
                 AppSettings.FontSize = FontSize;
