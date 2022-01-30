@@ -206,6 +206,7 @@ namespace App.Business
             return outputList;
         }
 
+
         /// <summary>
         /// Saves differences in the database with the <paramref name="inputList"/>.
         /// </summary>
@@ -310,6 +311,7 @@ namespace App.Business
             }
             #endregion
         }
+
 
         /// <summary>
         /// Inserts a new transaction into the database.
@@ -703,6 +705,7 @@ namespace App.Business
             await File.WriteAllTextAsync(filepath, saveFile);
         }
 
+
         /// <summary>
         /// Imports(Restores) the whole Database from a single file.
         /// </summary>
@@ -710,9 +713,215 @@ namespace App.Business
         /// <returns></returns>
         public static async Task ImportDB(string filepath)
         {
-            // TODO: Import DB from a file.
+            string file = await File.ReadAllTextAsync(filepath);
+            dynamic data = JsonConvert.DeserializeObject(file);
+
+            foreach(dynamic table in data.Tables)
+            {
+                string tableName = table.Table;
+                switch (tableName)
+                {
+                    #region Transactions
+                    case "Transactions":
+                        foreach(dynamic row in table.Content)
+                        {
+                            int ID = Convert.ToInt32(row.ID);
+                            double Value = Convert.ToDouble(row.Value);
+                            string Date = row.Date;
+                            string Description = row.Description;
+                            string Child = row.Child;
+
+                            using(IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (ID,Value,Date,Description,Child) " +
+                                    $"Values ({ID},{Value},'{Date}','{Description}','{Child}');");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Income
+                    case "IncomeTransaction":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string IncomeTransactionType = row.IncomeTransactionType;
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (IncomeTransactionType, TransactionID) " +
+                                    $"Values ('{IncomeTransactionType}',{TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region BeautyAndFashion
+                    case "BeautyAndFashionTransaction":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string BeautyAndFashionType = row.BeautyAndFashionType;
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (BeautyAndFashionType, TransactionID) " +
+                                    $"Values ('{BeautyAndFashionType}',{TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Bills
+                    case "Bills":
+                        foreach(dynamic row in table.Conent)
+                        {
+                            string BillType = row.BillType;
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (BillType, TransactionID) " +
+                                    $"Values ('{BillType}',{TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Debt
+                    case "DebtTransaction":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string Resolved = row.Resolved;
+                            string PaidBack = row.PaidBack;
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (Resolved, PaidBack, TransactionID) " +
+                                    $"Values ({Resolved},{PaidBack},{TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region "Loan"
+                    case "LoanTransaction":
+                        foreach (dynamic row in table.Content)
+                        {
+                            string Resolved = row.Resolved;
+                            string PayBack = row.PayBack;
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (Resolved, PayBack, TransactionID) " +
+                                    $"Values ({Resolved},{PayBack},{TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Entertainment
+                    case "EntertainmentTransaction":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string EntertainmentType = row.EntertainmentType;
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (EntertainmentType, TransactionID) " +
+                                    $"Values ('{EntertainmentType}',{TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Health
+                    case "HealthTransaction":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string HealthTransactionType = row.HealthTransactionType;
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (HealthTransactionType, TransactionID) " +
+                                    $"Values ('{HealthTransactionType}',{TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Grocery
+                    case "GroceryTransaction":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string TransactionID = row.TransactionID;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (TransactionID) " +
+                                    $"Values ({TransactionID});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Settings
+                    case "AppSettings":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string Username = row.Username;
+                            string FirstBoot = row.FirstBoot;
+                            string DefaultCurrency = row.DefaultCurrency;
+                            string DefaultLanguage = row.DefaultLanguage;
+                            string AutoSavePeriod = row.AutoSavePeriod;
+                            string DarkMode = row.DarkMode;
+                            string FontSize = row.FontSize;
+                            string DateFormat = row.DateFormat;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (Username, FirstBoot, DefaultCurrency, DefaultLanguage, AutoSavePeriod," +
+                                    $"DarkMode, FontSize, DateFormat) " +
+                                    $"Values ('{Username}',{FirstBoot},'{DefaultCurrency}','{DefaultLanguage}',{AutoSavePeriod}," +
+                                    $"{DarkMode},{FontSize},'{DateFormat}');");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region sequence
+                    case "sqlite_sequence":
+                        foreach(dynamic row in table.Content)
+                        {
+                            string name = row.name;
+                            string seq = row.seq;
+
+                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                            {
+                                dbConnection.Query($"Insert into {tableName} (name, seq) " +
+                                    $"Values ('{name}',{seq});");
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    default:
+                        throw new RavenException("Error while reading the file.");
+                }
+            }
         }
 
+
+        /// <summary>
+        /// Add a <paramref name="indentNum"/> number of spaces in front of each line in a string
+        /// </summary>
+        /// <param name="s">Input string</param>
+        /// <param name="indentNum">Number of spaces to add</param>
+        /// <returns>A new string with indented lines.</returns>
         private static string indent(string s, int indentNum)
         {
             string result = "";
