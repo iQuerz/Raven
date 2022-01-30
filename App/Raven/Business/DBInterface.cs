@@ -413,6 +413,7 @@ namespace App.Business
 
         #region AppSettings
         // TODO: test if all the AppSettings methods are working as intended.
+        // TODO: add default values if there's no data inside the table.
 
         #region Username
         public static string GetUsername()
@@ -513,10 +514,15 @@ namespace App.Business
             {
                 var settingValue = dbConnection
                     .Query<dynamic>("Select AutoSavePeriod from AppSettings;", new DynamicParameters())
-                    .AsList()[0]
-                    .AutoSavePeriod;
+                    .AsList();
 
-                return Convert.ToInt32(settingValue);
+                if (settingValue.Count == 0)
+                {
+                    AppSettings.AutoSavePeriod = 15;
+                    return 15;
+                }
+
+                return Convert.ToInt32(settingValue[0].AutoSavePeriod);
             }
         }
         public static void SetAutoSavePeriod(int newValue)
@@ -608,6 +614,7 @@ namespace App.Business
         /// <param name="filepath">Absolute path to the JSON file to which export will be saved.</param>
         public static async Task ExportDB(string filepath)
         {
+            // start of a file
             string saveFile = "{\n  \"Tables\": [";
             using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
             {
@@ -671,7 +678,7 @@ namespace App.Business
                 saveFile += indent(debtTransaction, 6);
                 saveFile += "    },";
 
-                saveFile += "\n    {\n      \"Table\":\"HralthTransaction\",\n      \"Content\":\n";
+                saveFile += "\n    {\n      \"Table\":\"HealthTransaction\",\n      \"Content\":\n";
                 saveFile += indent(healthTransaction, 6);
                 saveFile += "    },";
 
@@ -713,11 +720,14 @@ namespace App.Business
         /// <returns></returns>
         public static async Task ImportDB(string filepath)
         {
+            // deserialize the file.
             string file = await File.ReadAllTextAsync(filepath);
             dynamic data = JsonConvert.DeserializeObject(file);
 
+            // go through each table
             foreach(dynamic table in data.Tables)
             {
+                // add rows to db according to tablename
                 string tableName = table.Table;
                 switch (tableName)
                 {
@@ -774,7 +784,7 @@ namespace App.Business
 
                     #region Bills
                     case "Bills":
-                        foreach(dynamic row in table.Conent)
+                        foreach(dynamic row in table.Content)
                         {
                             string BillType = row.BillType;
                             string TransactionID = row.TransactionID;
@@ -870,27 +880,27 @@ namespace App.Business
                     #endregion
 
                     #region Settings
-                    case "AppSettings":
-                        foreach(dynamic row in table.Content)
-                        {
-                            string Username = row.Username;
-                            string FirstBoot = row.FirstBoot;
-                            string DefaultCurrency = row.DefaultCurrency;
-                            string DefaultLanguage = row.DefaultLanguage;
-                            string AutoSavePeriod = row.AutoSavePeriod;
-                            string DarkMode = row.DarkMode;
-                            string FontSize = row.FontSize;
-                            string DateFormat = row.DateFormat;
+                    //case "AppSettings":
+                    //    foreach(dynamic row in table.Content)
+                    //    {
+                    //        string Username = row.Username;
+                    //        string FirstBoot = row.FirstBoot;
+                    //        string DefaultCurrency = row.DefaultCurrency;
+                    //        string DefaultLanguage = row.DefaultLanguage;
+                    //        string AutoSavePeriod = row.AutoSavePeriod;
+                    //        string DarkMode = row.DarkMode;
+                    //        string FontSize = row.FontSize;
+                    //        string DateFormat = row.DateFormat;
 
-                            using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
-                            {
-                                dbConnection.Query($"Insert into {tableName} (Username, FirstBoot, DefaultCurrency, DefaultLanguage, AutoSavePeriod," +
-                                    $"DarkMode, FontSize, DateFormat) " +
-                                    $"Values ('{Username}',{FirstBoot},'{DefaultCurrency}','{DefaultLanguage}',{AutoSavePeriod}," +
-                                    $"{DarkMode},{FontSize},'{DateFormat}');");
-                            }
-                        }
-                        break;
+                    //        using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
+                    //        {
+                    //            dbConnection.Query($"Insert into {tableName} (Username, FirstBoot, DefaultCurrency, DefaultLanguage, AutoSavePeriod," +
+                    //                $"DarkMode, FontSize, DateFormat) " +
+                    //                $"Values ('{Username}',{FirstBoot},'{DefaultCurrency}','{DefaultLanguage}',{AutoSavePeriod}," +
+                    //                $"{DarkMode},{FontSize},'{DateFormat}');");
+                    //        }
+                    //    }
+                    //    break;
                     #endregion
 
                     #region sequence
@@ -945,13 +955,25 @@ namespace App.Business
         /// <summary>
         /// Delete Every single entry from the Database.
         /// </summary>
-        public static void Purge()
+        public static async Task Purge()
         {
             using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
             {
-                // TODO: Delete all data from the database.
+                await dbConnection.QueryAsync("Delete from Transactions");
+                await dbConnection.QueryAsync("Delete from IncomeTransaction");
+                await dbConnection.QueryAsync("Delete from LoanTransaction");
+                await dbConnection.QueryAsync("Delete from DebtTransaction");
+                await dbConnection.QueryAsync("Delete from HealthTransaction");
+                await dbConnection.QueryAsync("Delete from EntertainmentTransaction");
+                await dbConnection.QueryAsync("Delete from GroceryTransaction");
+                await dbConnection.QueryAsync("Delete from BeautyAndFashionTransaction");
+                await dbConnection.QueryAsync("Delete from Bills");
+
+                await dbConnection.QueryAsync("Delete from sqlite_sequence");
+                //await dbConnection.QueryAsync("Delete from AppSettings");
             }
         }
+
 
         /// <summary>
         /// DANGEROUS. Use at your own risk and test your query before executing it programmatically.
