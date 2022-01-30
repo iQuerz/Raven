@@ -606,46 +606,46 @@ namespace App.Business
         /// <param name="filepath">Absolute path to the JSON file to which export will be saved.</param>
         public static async Task ExportDB(string filepath)
         {
-            string saveFile = "{\"Tables\":[";
+            string saveFile = "{\n  \"Tables\": [";
             using (IDbConnection dbConnection = new SQLiteConnection(connectionString))
             {
                 #region Create json strings from table contents
 
                 #region Transactions
                 var tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from Transactions;", new DynamicParameters());
-                string transactions = JsonConvert.SerializeObject(tempTableContent);
+                string transactions = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from IncomeTransaction;", new DynamicParameters());
-                string incomeTransaction = JsonConvert.SerializeObject(tempTableContent);
+                string incomeTransaction = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from LoanTransaction;", new DynamicParameters());
-                string loanTransaction = JsonConvert.SerializeObject(tempTableContent);
+                string loanTransaction = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from DebtTransaction;", new DynamicParameters());
-                string debtTransaction = JsonConvert.SerializeObject(tempTableContent);
+                string debtTransaction = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from HealthTransaction;", new DynamicParameters());
-                string healthTransaction = JsonConvert.SerializeObject(tempTableContent);
+                string healthTransaction = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from GroceryTransaction;", new DynamicParameters());
-                string groceryTransaction = JsonConvert.SerializeObject(tempTableContent);
+                string groceryTransaction = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from EntertainmentTransaction;", new DynamicParameters());
-                string entertainmentTransaction = JsonConvert.SerializeObject(tempTableContent);
+                string entertainmentTransaction = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from Bills;", new DynamicParameters());
-                string bills = JsonConvert.SerializeObject(tempTableContent);
+                string bills = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from BeautyAndFashionTransaction;", new DynamicParameters());
-                string bnfTransaction = JsonConvert.SerializeObject(tempTableContent);
+                string bnfTransaction = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
                 #endregion
 
                 #region Settings
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from AppSettings;", new DynamicParameters());
-                string appSettings = JsonConvert.SerializeObject(tempTableContent);
+                string appSettings = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
 
                 tempTableContent = await dbConnection.QueryAsync<dynamic>("Select * from sqlite_sequence;", new DynamicParameters());
-                string sequence = JsonConvert.SerializeObject(tempTableContent);
+                string sequence = JsonConvert.SerializeObject(tempTableContent, Formatting.Indented);
                 #endregion
 
                 #endregion
@@ -653,50 +653,50 @@ namespace App.Business
                 #region Making the JSON
 
                 #region Transactions
-                saveFile += "{\"Table\":\"Transactions\",\"Content\":";
-                saveFile += transactions;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"Transactions\",\n      \"Content\":\n";
+                saveFile += indent(transactions, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"IncomeTransaction\",\"Content\":";
-                saveFile += incomeTransaction;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"IncomeTransaction\",\n      \"Content\":\n";
+                saveFile += indent(incomeTransaction, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"LoanTransaction\",\"Content\":";
-                saveFile += loanTransaction;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"LoanTransaction\",\n      \"Content\":\n";
+                saveFile += indent(loanTransaction, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"DebtTransaction\",\"Content\":";
-                saveFile += debtTransaction;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"DebtTransaction\",\n      \"Content\":\n";
+                saveFile += indent(debtTransaction, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"HralthTransaction\",\"Content\":";
-                saveFile += healthTransaction;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"HralthTransaction\",\n      \"Content\":\n";
+                saveFile += indent(healthTransaction, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"GroceryTransaction\",\"Content\":";
-                saveFile += groceryTransaction;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"GroceryTransaction\",\n      \"Content\":\n";
+                saveFile += indent(groceryTransaction, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"Bills\",\"Content\":";
-                saveFile += bills;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"Bills\",\n      \"Content\":\n";
+                saveFile += indent(bills, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"BeautyAndFashionTransaction\",\"Content\":";
-                saveFile += bnfTransaction;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"BeautyAndFashionTransaction\",\n      \"Content\":\n";
+                saveFile += indent(bnfTransaction, 6);
+                saveFile += "    },";
                 #endregion
 
                 #region Settings
-                saveFile += "{\"Table\":\"AppSettings\",\"Content\":";
-                saveFile += appSettings;
-                saveFile += "},";
+                saveFile += "\n    {\n      \"Table\":\"AppSettings\",\n      \"Content\":\n";
+                saveFile += indent(appSettings, 6);
+                saveFile += "    },";
 
-                saveFile += "{\"Table\":\"sqlite_sequence\",\"Content\":";
-                saveFile += sequence;
-                saveFile += "}"; //The end of the array. No need for ','.
+                saveFile += "\n    {\n      \"Table\":\"sqlite_sequence\",\n      \"Content\":\n";
+                saveFile += indent(sequence, 6);
+                saveFile += "    }"; //The end of the array. No need for ','.
                 #endregion
 
-                saveFile += "]}";
+                saveFile += "\n  ]\n}";
 
                 #endregion
             }
@@ -711,6 +711,22 @@ namespace App.Business
         public static async Task ImportDB(string filepath)
         {
             // TODO: Import DB from a file.
+        }
+
+        private static string indent(string s, int indentNum)
+        {
+            string result = "";
+            using (var reader = new StringReader(s))
+            {
+                for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
+                {
+                    for(int i = 0; i < indentNum; i++)
+                        result += " ";
+                    result += line;
+                    result += "\n";
+                }
+            }
+            return result;
         }
 
         #endregion
