@@ -209,15 +209,16 @@ namespace App.Business
         {
             DBInterface.SaveData(ref _Transactions);
         }
+
         #endregion
 
         #region Other
         /// <summary>
         /// Creates a temporary backup and deletes the database.
         /// </summary>
-        public void Purge()
+        public async void Purge()
         {
-            DBInterface.Purge();
+            await DBInterface.Purge();
         }
         #endregion
 
