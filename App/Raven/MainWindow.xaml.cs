@@ -52,6 +52,7 @@ namespace Raven
 
         private void App_OnLoad(object sender, RoutedEventArgs e)
         {
+            #region FirstBoot
             if (AppSettings.FirstBoot)
             {
                 // i doubt we need this here
@@ -64,17 +65,34 @@ namespace Raven
 
                 AppSettings.FirstBoot = false;
             }
-            // TODO: FontSize stuff here
+            #endregion
+
+            #region Font Size stuff
+
+            GreetingLabel.FontSize = AppSettings.FontSize * 4;
+            SearchBox.FontSize = AppSettings.FontSize * 2;
+            TransactionsList.FontSize = AppSettings.FontSize * 2;
+
+            #endregion
+
+            #region Greeting Label
 
             GreetingLabel.Content = GetGreetingMessage();
 
             _manager.loadTransactions();
             BalanceLabel.Content = _manager.BalanceString + " " + AppSettings.DefaultCurrency;
 
-            foreach(Transaction t in _manager.GetTransactions(8))
+            #endregion
+
+            #region Transactions
+
+            foreach (Transaction t in _manager.GetTransactions(8))
             {
                 TransactionsList.Items.Add(t._Description + ": " + t._Value + AppSettings.DefaultCurrency);
             }
+
+            #endregion
+
         }
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
