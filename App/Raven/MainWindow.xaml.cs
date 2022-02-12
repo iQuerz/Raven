@@ -60,7 +60,7 @@ namespace App
 
         private void App_OnLoad(object sender, RoutedEventArgs e)
         {
-
+            AppSettings.FirstBoot = true;
             #region FirstBoot
             if (AppSettings.FirstBoot)
             {
@@ -103,7 +103,6 @@ namespace App
             #endregion
 
         }
-
         private void App_Closing(object sender, EventArgs e)
         {
             // Save data before exiting

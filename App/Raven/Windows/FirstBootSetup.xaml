@@ -9,7 +9,10 @@
         FontSize="15"
         
         Width="1600" Height="900"
-        MinWidth="1280" MinHeight="720">
+        MinWidth="1280" MinHeight="720"
+        
+        ResizeMode ="CanResizeWithGrip" AllowsTransparency="True"
+         WindowStyle="None">
     
     <Border Background="#33333d">
         

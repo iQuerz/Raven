@@ -30,6 +30,7 @@ namespace App
             Closing += Window_Closing;
 
             FontSizeInput.ValueChanged += FontSize_Changed;
+            FontSizeInput.MouseDoubleClick += FontSize_DoubleClick;
             saveChangesButton.Click += SaveChanges_Click;
         }
         private void Window_OnLoad(object sender, EventArgs e)
@@ -54,11 +55,17 @@ namespace App
         {
             _mainWindow.Show();
         }
+
         private void FontSize_Changed(object sender, EventArgs e)
         {
             FontSize = FontSizeInput.Value;
             GreetingLabel.FontSize = FontSize * 2;
             saveChangesButton.FontSize = FontSize * 2;
+        }
+        private void FontSize_DoubleClick(object sender, EventArgs e)
+        {
+            //reset back to default
+            FontSizeInput.Value = 15;
         }
         private void SaveChanges_Click(object sender, EventArgs e)
         {
