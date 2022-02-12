@@ -696,9 +696,9 @@ namespace App.Business
                 #endregion
 
                 #region Settings
-                saveFile += "\n    {\n      \"Table\":\"AppSettings\",\n      \"Content\":\n";
-                saveFile += indent(appSettings, 6);
-                saveFile += "    },";
+                //saveFile += "\n    {\n      \"Table\":\"AppSettings\",\n      \"Content\":\n";
+                //saveFile += indent(appSettings, 6);
+                //saveFile += "    },";
 
                 saveFile += "\n    {\n      \"Table\":\"sqlite_sequence\",\n      \"Content\":\n";
                 saveFile += indent(sequence, 6);
