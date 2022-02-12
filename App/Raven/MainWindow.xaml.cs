@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace Raven
+namespace App
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -27,10 +27,15 @@ namespace Raven
         Manager _manager;
         public MainWindow()
         {
+
             InitializeComponent();
             _manager = new Manager();
+
+            #region WindowEvents
             Loaded += App_OnLoad;
+            Closing += App_Closing;
             exitButton.Click += ExitButton_Click;
+            #endregion
 
             #region AutoSave Timer Setup
             DispatcherTimer autoSaveTimer = new DispatcherTimer();
@@ -46,12 +51,16 @@ namespace Raven
             greetingTimer.Start();
             #endregion
 
+            #region TransactionsScroll
             TransactionsList.PreviewMouseWheel += TransactionsList_Scroll;
             TransactionsList.MouseWheel += TransactionsList_Scroll;
+            #endregion
+
         }
 
         private void App_OnLoad(object sender, RoutedEventArgs e)
         {
+
             #region FirstBoot
             if (AppSettings.FirstBoot)
             {
@@ -94,33 +103,10 @@ namespace Raven
             #endregion
 
         }
-
-        private void AutoSaveTimer_Tick(object sender, EventArgs e)
+        private void App_Closing(object sender, EventArgs e)
         {
+            // Save data before exiting
             _manager.saveTransactions();
-        }
-        private void GreetingTimer_Tick(object sender, EventArgs e)
-        {
-            GreetingLabel.Content = GetGreetingMessage();
-        }
-        private void ExitButton_Click(object sender, EventArgs e)
-        {
-            _manager.saveTransactions();
-            Close();
-        }
-        private void TransactionsList_Scroll(object sender, MouseWheelEventArgs e)
-        {
-            ScrollViewer.ScrollToVerticalOffset(ScrollViewer.VerticalOffset - e.Delta);
-        }
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsWindow settingsWindow = new SettingsWindow();
-            settingsWindow.Show();
-        }
-        private void newTransactionButton_Click(object sender, RoutedEventArgs e)
-        {
-            NewTransactionWindow newTransactionWindow = new NewTransactionWindow();
-            newTransactionWindow.Show();
         }
 
         private string GetGreetingMessage()
