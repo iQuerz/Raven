@@ -46,19 +46,26 @@ namespace Raven
             greetingTimer.Start();
             #endregion
 
+            TransactionsList.PreviewMouseWheel += TransactionsList_Scroll;
+            TransactionsList.MouseWheel += TransactionsList_Scroll;
         }
 
         private void App_OnLoad(object sender, RoutedEventArgs e)
         {
             if (AppSettings.FirstBoot)
             {
+                // i doubt we need this here
                 AppSettings.FontSize = FontSize;
 
-                FirstBootSetup firstBoot = new FirstBootSetup();
+                FirstBootSetup firstBoot = new FirstBootSetup(this);
+                firstBoot.Owner = this;
+                Hide();
                 firstBoot.ShowDialog();
 
                 AppSettings.FirstBoot = false;
             }
+            // TODO: FontSize stuff here
+
             GreetingLabel.Content = GetGreetingMessage();
 
             _manager.loadTransactions();
@@ -83,27 +90,29 @@ namespace Raven
             _manager.saveTransactions();
             Close();
         }
-
-        private string GetGreetingMessage()
+        private void TransactionsList_Scroll(object sender, MouseWheelEventArgs e)
         {
-            int h = DateTime.Now.Hour;
-            if(h >= 5 && h < 12)
-                return "Good morning, " + AppSettings.Username;
-            if(h >= 12 && h < 18)
-                return "Good afternoon, " + AppSettings.Username;
-            return "Good evening, " + AppSettings.Username;
+            ScrollViewer.ScrollToVerticalOffset(ScrollViewer.VerticalOffset - e.Delta);
         }
-
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             SettingsWindow settingsWindow = new SettingsWindow();
             settingsWindow.Show();
         }
-
         private void newTransactionButton_Click(object sender, RoutedEventArgs e)
         {
             NewTransactionWindow newTransactionWindow = new NewTransactionWindow();
             newTransactionWindow.Show();
+        }
+
+        private string GetGreetingMessage()
+        {
+            int h = DateTime.Now.Hour;
+            if (h >= 5 && h < 12)
+                return "Good morning, " + AppSettings.Username;
+            if (h >= 12 && h < 18)
+                return "Good afternoon, " + AppSettings.Username;
+            return "Good evening, " + AppSettings.Username;
         }
     }
 }

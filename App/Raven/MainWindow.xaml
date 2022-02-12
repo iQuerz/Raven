@@ -6,15 +6,15 @@
         mc:Ignorable="d"
         
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        ResizeMode="CanResizeWithGrip" AllowsTransparency="True"
         
         Background="Transparent"
         Width="1600" Height="900"
         MinWidth="1280" MinHeight="720">
+        <!--"CanResizeWithGrip" AllowsTransparency="True"-->
+        <!-- WindowStyle="None" -->
 
     <Border Background="#33333d"
-            CornerRadius="10">
+            CornerRadius="0">
         <Grid Name="MainGrid">
 
             <!--#region Definitions-->
@@ -55,18 +55,21 @@
             <!--#endregion-->
 
             <!--#region List & Search-->
-            <StackPanel Grid.Column="1" Grid.Row="2">
-                <TextBox x:Name="SearchBox"
+            <DockPanel Grid.Column="1" Grid.Row="2">
+                <ScrollViewer x:Name="ScrollViewer"
+                    Margin="0 20 0 20">
+                    <StackPanel>
+                        <TextBox x:Name="SearchBox"
                          Text="Search"
                          Background="#424250"
                          Foreground="#f7f7f7"
                          BorderThickness="2"
                          BorderBrush="#c93e70"
                          FontSize="30"
-                         Margin="20"
+                         Margin="20 0 20 20"
                          HorizontalAlignment="Stretch"/>
-
-                <ListView x:Name="TransactionsList"
+                        
+                        <ListView x:Name="TransactionsList"
                           Background="#424250"
                           Foreground="#f7f7f7"
                           BorderThickness="2"
@@ -75,11 +78,14 @@
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
                           Margin="20,0,20,20"/>
-            </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
             <!--#endregion-->
 
             <!--#region Menu Bar-->
-            <StackPanel Grid.Column="0" Grid.Row="0"
+            <StackPanel x:Name="MenuBar"
+                        Grid.Column="0" Grid.Row="0"
                         Grid.ColumnSpan="3"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
