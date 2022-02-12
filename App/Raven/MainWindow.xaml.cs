@@ -103,6 +103,7 @@ namespace App
             #endregion
 
         }
+
         private void App_Closing(object sender, EventArgs e)
         {
             // Save data before exiting
